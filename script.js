@@ -216,3 +216,62 @@ function showError(message) {
 document.addEventListener('DOMContentLoaded', () => {
     showForm('single'); // Show single prediction form by default
 });
+
+// Dummy users data
+const dummyUsers = [
+    { id: "CUST001", timestamp: "2024-03-20T10:30" },
+    { id: "CUST002", timestamp: "2024-03-19T14:45" },
+    { id: "CUST003", timestamp: "2024-03-18T09:15" },
+    { id: "CUST004", timestamp: "2024-03-17T16:20" },
+    { id: "CUST005", timestamp: "2024-03-16T11:55" }
+];
+
+// Add event listeners for customer ID input
+document.addEventListener('DOMContentLoaded', function() {
+    const customerIdInput = document.getElementById('customId');
+    const suggestionsDiv = document.getElementById('customerSuggestions');
+    const revenueInput = document.getElementById('revenue');
+    const timestampInput = document.getElementById('timestamp');
+
+    customerIdInput.addEventListener('input', function(e) {
+        const value = e.target.value.toLowerCase();
+        const filteredUsers = dummyUsers.filter(user => 
+            user.id.toLowerCase().includes(value)
+        );
+        
+        showSuggestions(filteredUsers);
+    });
+
+    customerIdInput.addEventListener('focus', function() {
+        showSuggestions(dummyUsers);
+    });
+
+    // Hide suggestions when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!customerIdInput.contains(e.target) && !suggestionsDiv.contains(e.target)) {
+            suggestionsDiv.style.display = 'none';
+        }
+    });
+
+    function showSuggestions(users) {
+        suggestionsDiv.innerHTML = '';
+        
+        if (users.length === 0) {
+            suggestionsDiv.style.display = 'none';
+            return;
+        }
+
+        users.forEach(user => {
+            const div = document.createElement('div');
+            div.className = 'suggestion-item';
+            div.textContent = user.id;
+            div.addEventListener('click', () => {
+                customerIdInput.value = user.id;
+                suggestionsDiv.style.display = 'none';
+            });
+            suggestionsDiv.appendChild(div);
+        });
+
+        suggestionsDiv.style.display = 'block';
+    }
+});
